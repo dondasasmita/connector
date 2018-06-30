@@ -5,6 +5,7 @@ It will return errors object or a valid data
 ============
 */
 
+//load the dependencies
 const Validator = require('validator')
 const isEmpty = require('./is-empty') 
 
