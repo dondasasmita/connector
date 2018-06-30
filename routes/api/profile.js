@@ -3,23 +3,33 @@ const router = express.Router()
 const mongoose = require('mongoose')
 const passport = require('passport')
 
+//Load input validation
+const validateProfileInput = require('../../validation/profile')
+
 // load profile and user models
 const Profile = require('../models/Profile')
 const User = require('../models/User')
 
-// @route   GET api/profile/test
-// @desc    Tests profile route
-// @access  Public 
+/*
+@route   GET api/profile/test
+@desc    Tests profile route
+@access  Public
+*/ 
 router.get('/test', (req, res) => res.json({
     msg: "Profile Works"
 }))
 
-// @route   GET api/profile
-// @desc    Get current user's profile
-// @access  Private
+/*
+@route   GET api/profile
+@desc    Get current user's profile
+@access  Private
+*/
 router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
     const errors = {}
+    //find one user with the ID from the Profile schema
     Profile.findOne({user: req.user.id})
+    //get username and avatar from user object
+    .populate('user',['username', 'avatar'])
     .then(profile => {
         if(!profile) {
             errors.noprofile = 'There is no profile found'
@@ -30,10 +40,19 @@ router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
     .catch( err => res.status(404).json(err))
 })
 
-// @route   POST api/profile
-// @desc    Create and Update current user's profile
-// @access  Private
+/*
+@route   POST api/profile
+@desc    Create and Update current user's profile
+@access  Private
+*/
 router.post('/', passport.authenticate('jwt', {session: false}), (req, res) => {
+    const {errors, isValid} = validateProfileInput(req.body)
+    //check validation
+    if (!isValid) {
+        // if request is not valid, return response with status 400
+        return res.status(400).json(errors)
+    }
+
     //Get all fields and store in profileFields object
     const profileFields = {}
     //find the user by ID  
@@ -92,7 +111,7 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res) => {
         if(profile) {
             //update profile
             Profile.findOneAndUpdate(
-                {user: req.body.id}, 
+                {user: req.user.id}, 
                 {$set: profileFields},
                 {new: true}
             )
