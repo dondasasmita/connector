@@ -1,3 +1,10 @@
+/*
+============
+Method to validate user data 
+It will return errors object or a valid data 
+============
+*/
+
 const Validator = require('validator')
 const isEmpty = require('./is-empty') 
 
