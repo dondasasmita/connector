@@ -41,6 +41,75 @@ router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
 })
 
 /*
+@route   GET api/profile/all
+@desc    Get all users profile
+@access  Public
+*/
+router.get('/all', (req, res) => {
+    //initialized errors object
+    const errors = {}
+    //find user by the handle name from the url param
+    Profile.find()
+    //get username and avatar from user object
+    .populate('user',['username', 'avatar'])
+    .then(profiles => {
+        if(!profiles){
+            errors.noprofiles = 'There are no profiles found'
+            return res.status(404).json(errors)
+        }
+        res.json(profiles)
+    })
+    .catch(err => res.status(404).json({profile: 'There are no profiles found'}))
+})
+ 
+/*
+@route   GET api/profile/handle/:handle
+@desc    Get profile by handle(username)
+@access  Public
+*/
+router.get('/handle/:handle', (req, res) => {
+    //initialized errors object
+    const errors = {}
+    //find user by the handle name from the url param
+    Profile.findOne({handle: req.params.handle})
+    //get username and avatar from user object
+    .populate('user',['username', 'avatar'])
+    .then(profile => {
+        if(!profile){
+            //error message
+            errors.noprofile = 'No profile found for this user'
+            return res.status(404).json(errors)
+        }
+        res.json(profile)
+    })
+    .catch(err => res.status(404).json({profile: 'No profile found for this user'}))
+})
+
+/*
+@route   GET api/profile/user/:user_id
+@desc    Get profile by user ID
+@access  Public
+*/
+router.get('/user/:user_id', (req, res) => {
+    //initialized errors object
+    const errors = {}
+    //find user by the handle name from the url param
+    Profile.findOne({user: req.params.user_id})
+    //get username and avatar from user object
+    .populate('user',['username', 'avatar'])
+    .then(profile => {
+        if(!profile){
+            //error message
+            errors.noprofile = 'No profile found for this user'
+            return res.status(404).json(errors)
+        }
+        res.json(profile)
+    })
+    .catch(err => res.status(404).json({profile: 'No profile found for this user'}))
+})
+
+
+/*
 @route   POST api/profile
 @desc    Create and Update current user's profile
 @access  Private
