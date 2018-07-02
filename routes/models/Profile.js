@@ -52,10 +52,11 @@ const ProfileSchema = new Schema({
            },
            from: {
                type: Date,
+            //    uncommented this does not accept format YYYY-MM-DD
                required: true
            },
            to: {
-               type: Date,
+               type: Date
            },
            // if the user is currently still working in the company / school
            current: {
@@ -77,7 +78,7 @@ const ProfileSchema = new Schema({
                 type: String,
                 required: true
             },
-            fieldofstudy:{
+            fieldOfStudy:{
                 type: String,
                 required: true
             },
@@ -86,7 +87,7 @@ const ProfileSchema = new Schema({
                 required: true
             },
             to: {
-                type: Date,
+                type: Date
             },
             // if the user is currently still working in the company / school
             current: {
